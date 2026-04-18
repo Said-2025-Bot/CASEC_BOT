@@ -1,0 +1,1384 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
+  <title>GAMING</title>
+  <style>
+    :root{
+      --bg:#090b12;
+      --panel:#131722;
+      --panel2:#191e2d;
+      --text:#f4f7ff;
+      --muted:#9aa4ba;
+      --accent:#8b6bff;
+      --accent2:#5b7bff;
+      --danger:#ff5b6b;
+      --ok:#2dd57d;
+      --border:rgba(255,255,255,.08);
+      --shadow:0 18px 60px rgba(0,0,0,.45);
+      --radius:22px;
+      box-sizing:border-box;
+    }
+    *,*::before,*::after{box-sizing:border-box}
+    html{scroll-behavior:smooth;overflow-y:auto}
+    body{
+      margin:0;
+      min-height:100vh;
+      font-family:Inter,system-ui,-apple-system,Segoe UI,Roboto,Arial,sans-serif;
+      color:var(--text);
+      background:
+        radial-gradient(circle at 10% 10%, rgba(139,107,255,.20), transparent 18%),
+        radial-gradient(circle at 90% 90%, rgba(0,212,255,.12), transparent 20%),
+        linear-gradient(135deg, #070810 0%, #120f24 46%, #090b12 100%);
+      overflow-x:hidden;
+      -webkit-tap-highlight-color:transparent;
+    }
+    body::before, body::after{
+      content:"";
+      position:fixed;
+      inset:0;
+      pointer-events:none;
+      z-index:0;
+    }
+    body::before{
+      background:
+        radial-gradient(circle at 15% 15%, rgba(139,107,255,.12), transparent 20%),
+        radial-gradient(circle at 80% 80%, rgba(0,212,255,.08), transparent 22%);
+    }
+    body::after{
+      inset:-20%;
+      background:
+        radial-gradient(circle at 20% 20%, rgba(139,107,255,.16), transparent 12%),
+        radial-gradient(circle at 82% 14%, rgba(0,212,255,.12), transparent 14%),
+        radial-gradient(circle at 72% 78%, rgba(255,215,90,.08), transparent 16%);
+      filter:blur(16px);
+      opacity:.9;
+      animation:ambientShift 12s ease-in-out infinite alternate;
+    }
+    .bg-glow{
+      position:fixed;
+      width:420px;
+      height:420px;
+      border-radius:50%;
+      filter:blur(90px);
+      opacity:.16;
+      pointer-events:none;
+      z-index:0;
+    }
+    .bg-glow-1{top:-100px;left:-100px;background:#8b6bff}
+    .bg-glow-2{right:-120px;bottom:-120px;background:#00d4ff}
+    .topbar,.container{position:relative;z-index:1}
+    .topbar{
+      display:flex;
+      justify-content:space-between;
+      align-items:center;
+      gap:16px;
+      padding:22px clamp(14px,3vw,34px);
+      position:sticky;
+      top:0;
+      background:linear-gradient(180deg, rgba(9,11,18,.85), rgba(9,11,18,.55));
+      backdrop-filter:blur(12px);
+    }
+    .brand{font-size:clamp(26px,4vw,34px);font-weight:900;letter-spacing:.6px}
+    .subtitle{margin-top:4px;color:var(--muted);font-size:14px}
+    .balance-box{
+      min-width:180px;
+      text-align:right;
+      padding:12px 16px;
+      border-radius:18px;
+      background:linear-gradient(180deg, rgba(255,255,255,.08), rgba(255,255,255,.04));
+      border:1px solid var(--border);
+      box-shadow:var(--shadow);
+    }
+    .balance-label{font-size:12px;color:var(--muted)}
+    .balance-value{font-size:clamp(18px,3vw,22px);font-weight:800;margin-top:4px}
+    .container{padding:0 clamp(14px,3vw,34px) 34px;overflow:visible}
+    .hero{
+      display:flex;
+      justify-content:space-between;
+      align-items:center;
+      gap:18px;
+      background:linear-gradient(180deg, rgba(255,255,255,.07), rgba(255,255,255,.03));
+      border:1px solid var(--border);
+      border-radius:var(--radius);
+      padding:20px;
+      box-shadow:var(--shadow);
+      backdrop-filter:blur(10px);
+      animation:heroPulse 6s ease-in-out infinite;
+    }
+    .hero h1{margin:0 0 8px;font-size:clamp(22px,4vw,42px);line-height:1.1}
+    .hero p{margin:0;color:var(--muted);max-width:820px;line-height:1.55}
+    .hero-actions{margin-top:16px;display:flex;gap:10px;flex-wrap:wrap}
+    .admin-btn,.primary-btn,.danger-btn,.close-btn,.case-btn,.save-btn,.count-btn,.open-case-btn{
+      border:none;
+      border-radius:16px;
+      font-weight:800;
+      cursor:pointer;
+      transition:.25s ease;
+      touch-action:manipulation;
+    }
+    .admin-btn,.primary-btn,.case-btn,.save-btn,.count-btn,.open-case-btn{
+      color:#fff;
+      background:linear-gradient(135deg, var(--accent), var(--accent2));
+      box-shadow:0 12px 30px rgba(139,107,255,.23);
+    }
+    .admin-btn,.primary-btn{padding:14px 18px}
+    .admin-btn:hover,.primary-btn:hover,.case-btn:hover,.danger-btn:hover,.close-btn:hover,.save-btn:hover,.count-btn:hover,.open-case-btn:hover{
+      transform:translateY(-2px);
+      filter:brightness(1.06);
+    }
+    .cases-grid{
+      display:grid;
+      grid-template-columns:repeat(auto-fit,minmax(280px,1fr));
+      gap:16px;
+      margin-top:20px;
+      align-items:stretch;
+    }
+    .case-card{
+      position:relative;
+      overflow:hidden;
+      background:linear-gradient(180deg, rgba(255,255,255,.06), rgba(255,255,255,.03));
+      border:1px solid var(--border);
+      border-radius:var(--radius);
+      padding:18px;
+      box-shadow:var(--shadow);
+      display:flex;
+      flex-direction:column;
+      gap:14px;
+      transition:.22s ease;
+    }
+    .case-head{display:flex;justify-content:space-between;align-items:flex-start;gap:12px;flex-wrap:wrap}
+    .case-name{font-size:24px;font-weight:900}
+    .case-price{font-size:14px;color:#d7dcec;font-weight:700;margin-top:5px}
+    .case-hero{display:flex;align-items:center;gap:12px;padding:10px 0 2px}
+    .case-emoji{
+      width:52px;height:52px;border-radius:16px;
+      display:flex;align-items:center;justify-content:center;
+      background:linear-gradient(135deg, rgba(139,107,255,.22), rgba(0,212,255,.12));
+      border:1px solid rgba(255,255,255,.08);
+      font-size:28px;
+      box-shadow:0 10px 22px rgba(0,0,0,.2);
+      flex:none;
+    }
+    .case-desc{color:var(--muted);font-size:14px;line-height:1.5}
+    .prize-list{display:grid;gap:10px}
+    .prize-row{
+      display:grid;
+      grid-template-columns:1.4fr .8fr;
+      gap:10px;
+      padding:12px;
+      border-radius:14px;
+      background:rgba(255,255,255,.04);
+      border:1px solid rgba(255,255,255,.05);
+    }
+    .prize-row span:nth-child(2){text-align:right;color:#dce1ed}
+    .case-btn{padding:15px 18px;font-size:15px;white-space:nowrap}
+    .modal{
+      position:fixed;
+      inset:0;
+      background:rgba(5,5,10,.72);
+      backdrop-filter:blur(12px);
+      display:flex;
+      align-items:center;
+      justify-content:center;
+      padding:14px;
+      z-index:20;
+      overflow-y:auto;
+    }
+    .hidden{display:none !important}
+    .modal-card{
+      width:min(1080px,100%);
+      background:linear-gradient(180deg, #1b1d27, #12131a);
+      border:1px solid var(--border);
+      border-radius:26px;
+      padding:24px;
+      box-shadow:var(--shadow);
+      position:relative;
+    }
+    .admin-card{
+      width:min(1020px,100%);
+      max-width:1020px;
+      max-height:90vh;
+      overflow-y:auto;
+      overflow-x:hidden;
+      padding:28px;
+      border-radius:24px;
+      background:
+        radial-gradient(circle at top left, rgba(139,107,255,.14), transparent 28%),
+        radial-gradient(circle at bottom right, rgba(255,122,24,.08), transparent 24%),
+        linear-gradient(180deg, rgba(25,27,38,.98), rgba(16,17,23,.98));
+      border:1px solid rgba(255,255,255,.08);
+      box-shadow:0 22px 70px rgba(0,0,0,.55);
+      animation:adminFadeIn .28s ease-out;
+    }
+    .modal-title{font-size:26px;font-weight:900;margin-bottom:18px}
+    .site-head{
+      margin:0 0 20px;
+      padding:18px 18px 20px;
+      border-radius:18px;
+      background:linear-gradient(180deg, rgba(255,255,255,.06), rgba(255,255,255,.03));
+      border:1px solid rgba(255,255,255,.08);
+    }
+    .site-head-title{font-size:30px;font-weight:900;margin-bottom:8px}
+    .site-head-desc{font-size:15px;color:var(--muted);line-height:1.55;max-width:760px}
+    .site-head .field{margin-top:14px}
+    .case-toolbar{
+      display:flex;
+      justify-content:space-between;
+      align-items:center;
+      gap:12px;
+      flex-wrap:wrap;
+      margin-bottom:14px;
+    }
+    .roll-count-row{display:flex;gap:8px;flex-wrap:wrap}
+    .count-btn{padding:12px 16px;background:#202433;border:1px solid rgba(255,255,255,.08)}
+    .count-btn.active{background:linear-gradient(135deg,#8b6bff,#5b7bff);box-shadow:0 12px 28px rgba(91,123,255,.24)}
+    .open-case-btn{padding:13px 22px;min-width:160px}
+    .multi-roll-area{
+      display:grid;
+      gap:14px;
+      margin-top:8px;
+      align-items:stretch;
+      width:100%;
+      grid-auto-flow:column;
+      grid-auto-columns:minmax(0, 1fr);
+      contain:layout paint;
+      overflow:hidden;
+    }
+    .multi-roll-area.count-1{grid-template-columns:1fr}
+    .multi-roll-area.count-2,
+    .multi-roll-area.count-3{grid-template-columns:repeat(auto-fit,minmax(240px,1fr))}
+    .roll-item{
+      margin-bottom:0;
+      padding:16px;
+      border-radius:20px;
+      background:linear-gradient(180deg, rgba(255,255,255,.05), rgba(255,255,255,.03));
+      border:1px solid rgba(255,255,255,.08);
+      box-shadow:0 12px 30px rgba(0,0,0,.22);
+      transition:transform .3s ease, box-shadow .3s ease;
+      position:relative;
+      overflow:hidden;
+      min-width:0;
+      contain:layout paint;
+    }
+    .roll-item.big-win{box-shadow:0 0 0 1px rgba(255,215,90,.35), 0 0 34px rgba(255,215,90,.18), 0 20px 60px rgba(0,0,0,.32)}
+    .roller-wrap{
+      position:relative;
+      background:linear-gradient(180deg, rgba(20,22,32,.92), rgba(10,11,16,.96));
+      border:1px solid rgba(255,255,255,.08);
+      border-radius:22px;
+      padding:14px 12px;
+      overflow:hidden;
+      min-width:0;
+      width:100%;
+      contain:layout paint;
+    }
+    .roller-window{
+      position:relative;
+      overflow:hidden;
+      border-radius:18px;
+      height:150px;
+      background:linear-gradient(180deg,#11131a,#0c0d11);
+      width:100%;
+      min-width:0;
+      contain:layout paint;
+    }
+    .roller-window.is-spinning{filter:blur(.15px)}
+    .roller-track{
+      position:absolute;
+      left:0;
+      top:0;
+      height:100%;
+      display:flex;
+      align-items:center;
+      flex-wrap:nowrap;
+      white-space:nowrap;
+      will-change:transform;
+      transform:translate3d(0,0,0);
+      transition-timing-function:cubic-bezier(.12,.85,.12,1);
+    }
+    .roller-line{
+      position:absolute;
+      left:50%;
+      top:0;
+      bottom:0;
+      width:3px;
+      background:linear-gradient(180deg, transparent, #9d7aff, transparent);
+      transform:translateX(-50%);
+      z-index:4;
+      box-shadow:0 0 18px rgba(157,122,255,.65);
+    }
+    .selector{
+      position:absolute;
+      left:50%;
+      top:-10px;
+      transform:translateX(-50%);
+      width:0;height:0;z-index:5;
+      border-left:12px solid transparent;
+      border-right:12px solid transparent;
+      border-top:12px solid #9d7aff;
+      filter:drop-shadow(0 0 10px rgba(157,122,255,.75));
+    }
+    .selector::after{
+      content:"";
+      position:absolute;
+      left:-12px;
+      top:142px;
+      width:0;height:0;
+      border-left:12px solid transparent;
+      border-right:12px solid transparent;
+      border-bottom:12px solid #9d7aff;
+    }
+    .roller-item{
+      width:120px;
+      height:118px;
+      margin:0 10px;
+      border-radius:18px;
+      background:linear-gradient(180deg,#2a2d3a,#181b24);
+      border:1px solid rgba(255,255,255,.08);
+      display:flex;
+      align-items:center;
+      justify-content:center;
+      flex-direction:column;
+      flex:0 0 auto;
+      box-shadow:0 10px 25px rgba(0,0,0,.24);
+      position:relative;
+      min-width:120px;
+    }
+    .roller-item .mini{
+      width:74px;height:74px;border-radius:16px;
+      display:flex;align-items:center;justify-content:center;
+      background:linear-gradient(135deg,#6a7cff,#8b6bff);
+      font-size:34px;
+      box-shadow:0 0 0 1px rgba(255,255,255,.08), 0 0 24px rgba(139,107,255,.18);
+    }
+    .roller-item.win{
+      border-color:rgba(255,215,90,.6);
+      box-shadow:0 0 0 2px rgba(255,215,90,.16), 0 10px 25px rgba(0,0,0,.28), 0 0 30px rgba(255,215,90,.12);
+    }
+    .roller-item .amount{margin-top:10px;font-size:13px;font-weight:800;text-align:center}
+    .roller-item .rarity{margin-top:4px;font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.6px;opacity:.85;text-align:center}
+    .modal-result{margin-top:14px;font-size:18px;font-weight:800;min-height:28px}
+    .modal-result.big{color:#ffd96a;text-shadow:0 0 14px rgba(255,217,106,.45);animation:bigWinPulse .9s ease-in-out 2}
+    .close-btn,.danger-btn,.save-btn{
+      padding:12px 16px;
+      background:#2a2d3a;
+      color:#fff;
+      border:1px solid rgba(255,255,255,.08);
+    }
+    .admin-login,.admin-top,.admin-actions{
+      display:flex;
+      gap:14px;
+      align-items:center;
+      justify-content:space-between;
+    }
+    .admin-top,.admin-actions{margin-bottom:16px;flex-wrap:wrap}
+    .admin-actions{align-items:flex-start}
+    .admin-login{
+      flex-direction:column;
+      align-items:stretch;
+      max-width:460px;
+      margin:0 auto;
+    }
+    .hint{display:block;color:var(--muted);margin:10px 0 8px;font-size:13px;line-height:1.45}
+    .error{color:#ff9090}
+    .input,textarea{
+      width:100%;
+      padding:14px 16px;
+      border-radius:14px;
+      border:1px solid rgba(255,255,255,.1);
+      background:#11131a;
+      color:#fff;
+      outline:none;
+      font-size:16px;
+      transition:.25s ease;
+    }
+    .input:focus,textarea:focus{
+      border-color:rgba(139,107,255,.75);
+      box-shadow:0 0 0 3px rgba(139,107,255,.16), 0 0 20px rgba(139,107,255,.14);
+      background:#11131b;
+    }
+    textarea{min-height:88px;resize:vertical;font-size:15px}
+    .admin-control{
+      background:linear-gradient(180deg, rgba(255,255,255,.05), rgba(255,255,255,.03));
+      border:1px solid rgba(255,255,255,.08);
+      border-radius:20px;
+      padding:20px;
+      margin-top:18px;
+      box-shadow:0 10px 30px rgba(0,0,0,.24);
+      animation:fadeInUp .25s ease-out;
+    }
+    .admin-control h3{margin:0 0 16px;font-size:22px;font-weight:900}
+    .control-grid,.control-row{display:grid;gap:14px}
+    .control-grid{grid-template-columns:repeat(2,minmax(0,1fr))}
+    .control-row{grid-template-columns:repeat(2,minmax(0,1fr));margin-top:14px;gap:18px}
+    .rewards-stack{display:grid;gap:16px;margin-top:16px}
+    .reward-card{
+      padding:18px;
+      border-radius:18px;
+      background:linear-gradient(180deg, rgba(255,255,255,.05), rgba(255,255,255,.03));
+      border:1px solid rgba(255,255,255,.08);
+      box-shadow:0 10px 28px rgba(0,0,0,.22);
+    }
+    .reward-title{font-size:18px;font-weight:900;margin-bottom:14px;color:#fff}
+    .field{display:flex;flex-direction:column;gap:7px}
+    .field label{font-size:12px;font-weight:700;color:#b4bccd;margin:0;letter-spacing:.2px}
+    .field input{
+      width:100%;
+      height:46px;
+      padding:0 14px;
+      border-radius:12px;
+      border:1px solid rgba(255,255,255,.10);
+      background:#0f1118;
+      color:#fff;
+      outline:none;
+      font-size:15px;
+      transition:.25s ease;
+    }
+    .field input:focus{
+      border-color:rgba(139,107,255,.75);
+      box-shadow:0 0 0 3px rgba(139,107,255,.16), 0 0 20px rgba(139,107,255,.14);
+      background:#11131b;
+    }
+    .primary-btn,.save-btn{
+      min-height:46px;
+      padding:0 18px;
+      border-radius:12px;
+      background:linear-gradient(135deg, #8b6bff, #5b7bff);
+      border:1px solid rgba(255,255,255,.08);
+      box-shadow:0 12px 28px rgba(91,123,255,.24);
+    }
+    .danger-btn{min-height:46px;padding:0 18px;border-radius:12px}
+    #saveAllBtn{min-width:160px}
+    #adminGlobalHint,#adminLoginHint{margin-top:8px;min-height:20px}
+    .toast{
+      position:fixed;
+      left:50%;
+      bottom:22px;
+      transform:translateX(-50%);
+      background:#181a22;
+      border:1px solid rgba(255,255,255,.08);
+      color:#fff;
+      padding:12px 16px;
+      border-radius:14px;
+      box-shadow:var(--shadow);
+      z-index:40;
+      animation:fadeInUp .2s ease-out;
+      max-width:min(92vw,520px);
+      text-align:center;
+    }
+    .picker-row{display:flex;gap:8px;flex-wrap:wrap}
+    .picker-btn{
+      padding:10px 12px;
+      border-radius:12px;
+      border:1px solid rgba(255,255,255,.10);
+      background:#0f1118;
+      color:#fff;
+      cursor:pointer;
+      font-weight:800;
+    }
+    .picker-btn.active{transform:translateY(-1px);box-shadow:0 0 0 2px rgba(139,107,255,.18)}
+    .picker-white.active,.eff-white.active{background:#fff;color:#0b0d14}
+    .picker-gold.active,.eff-gold.active{background:#ffd86c;color:#0b0d14}
+    .picker-diamond.active,.eff-diamond.active{background:#8fe8ff;color:#0b0d14}
+    .picker-emerald.active,.eff-emerald.active{background:#53e6a5;color:#0b0d14}
+    .picker-blue.active,.eff-blue.active{background:#84a8ff;color:#0b0d14}
+    .prize-white{color:#fff;text-shadow:0 0 10px rgba(255,255,255,.35)}
+    .prize-gold{color:#ffd86c;text-shadow:0 0 14px rgba(255,216,108,.45)}
+    .prize-diamond{color:#8fe8ff;text-shadow:0 0 14px rgba(143,232,255,.5)}
+    .prize-emerald{color:#53e6a5;text-shadow:0 0 14px rgba(83,230,165,.45)}
+    .prize-blue{color:#84a8ff;text-shadow:0 0 14px rgba(132,168,255,.45)}
+    .result-tag{
+      display:inline-flex;
+      align-items:center;
+      padding:4px 10px;
+      border-radius:999px;
+      font-size:11px;
+      letter-spacing:.8px;
+      margin-right:8px;
+      border:1px solid rgba(255,255,255,.08);
+    }
+    .result-tag.white{background:rgba(255,255,255,.08)}
+    .result-tag.gold{background:rgba(255,216,108,.14)}
+    .result-tag.diamond{background:rgba(143,232,255,.14)}
+    .result-tag.emerald{background:rgba(83,230,165,.14)}
+    .result-tag.blue{background:rgba(132,168,255,.14)}
+    .result-amount{font-weight:900}
+    .prize-card-white{box-shadow:0 0 22px rgba(255,255,255,.10)}
+    .prize-card-gold{box-shadow:0 0 26px rgba(255,216,108,.16)}
+    .prize-card-diamond{box-shadow:0 0 26px rgba(143,232,255,.16)}
+    .prize-card-emerald{box-shadow:0 0 26px rgba(83,230,165,.16)}
+    .prize-card-blue{box-shadow:0 0 26px rgba(132,168,255,.16)}
+    .history-list{display:grid;gap:10px}
+    .history-item{
+      display:flex;
+      justify-content:space-between;
+      gap:12px;
+      align-items:center;
+      padding:12px 14px;
+      border-radius:14px;
+      background:rgba(255,255,255,.04);
+      border:1px solid rgba(255,255,255,.06);
+    }
+    .history-main{font-weight:800}
+    .history-meta{font-size:12px;color:var(--muted);margin-top:3px}
+    .history-amount{font-weight:900;white-space:nowrap}
+    ::-webkit-scrollbar{width:8px;height:8px}
+    ::-webkit-scrollbar-track{background:rgba(255,255,255,.04)}
+    ::-webkit-scrollbar-thumb{background:linear-gradient(180deg,#7a5cff,#00d4ff);border-radius:10px}
+    *{scrollbar-width:thin;scrollbar-color:#7a5cff rgba(255,255,255,.04)}
+    @keyframes adminFadeIn{from{opacity:0;transform:translateY(10px) scale(.99)}to{opacity:1;transform:translateY(0) scale(1)}}
+    @keyframes fadeInUp{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:translateY(0)}}
+    @keyframes ambientShift{from{transform:translate3d(0,0,0) scale(1)}to{transform:translate3d(1.5%,-1.2%,0) scale(1.03)}}
+    @keyframes heroPulse{0%,100%{box-shadow:var(--shadow)}50%{box-shadow:0 0 0 1px rgba(139,107,255,.15), 0 0 42px rgba(139,107,255,.12), var(--shadow)}}
+    @keyframes bigWinPulse{0%,100%{transform:scale(1)}50%{transform:scale(1.03)}}
+
+    @media (max-width: 900px){
+      .hero,.topbar,.admin-top,.admin-actions{flex-direction:column;align-items:stretch}
+      .balance-box{text-align:left}
+      .case-toolbar{flex-direction:column;align-items:stretch}
+      .open-case-btn,.count-btn{width:100%}
+      .control-grid,.control-row{grid-template-columns:1fr}
+      .multi-roll-area.count-2,.multi-roll-area.count-3{grid-template-columns:1fr}
+    }
+    @media (max-width: 540px){
+      .container{padding-bottom:24px}
+      .hero{padding:16px}
+      .modal-card,.admin-card{padding:16px}
+      .site-head-title{font-size:22px}
+      .site-head-desc{font-size:14px}
+      .roller-window{height:138px}
+      .roller-item{width:108px;height:110px;min-width:108px}
+      .roller-item .mini{width:68px;height:68px;font-size:30px}
+      .roller-wrap::before,.roller-wrap::after{width:42px}
+      .case-name{font-size:22px}
+      .modal-title{font-size:22px}
+    }
+  </style>
+</head>
+<body>
+  <div class="bg-glow bg-glow-1"></div>
+  <div class="bg-glow bg-glow-2"></div>
+
+  <header class="topbar">
+    <div>
+      <div class="brand">GAMING</div>
+      <div class="subtitle">Открывай кейсы</div>
+    </div>
+    <div class="balance-box">
+      <div class="balance-label">Баланс</div>
+      <div class="balance-value" id="balanceValue">0 PR GRAM</div>
+    </div>
+  </header>
+
+  <main class="container">
+    <section class="hero">
+      <div>
+        <h1 id="heroTitle">Открывай кейсы красиво и без задержек</h1>
+        <p id="heroDesc">Результат определяется до анимации, а интерфейс показывает его красиво и без задержек.</p>
+        <div class="hero-actions">
+          <button class="admin-btn" id="openAdminBtn" type="button">Мой профиль</button>
+          <button class="primary-btn" id="toggleHistoryBtn" type="button">История игр</button>
+        </div>
+      </div>
+    </section>
+    <section class="cases-grid" id="casesGrid"></section>
+  </main>
+
+  <div class="modal hidden" id="historyModal">
+    <div class="modal-card admin-card">
+      <div class="modal-title">Моя история игр</div>
+      <div class="history-list" id="historyList"></div>
+      <button class="close-btn" id="closeHistoryModalBtn" type="button">Закрыть</button>
+    </div>
+  </div>
+
+  <div class="modal hidden" id="caseModal">
+    <div class="modal-card">
+      <div class="modal-title" id="modalTitle">Открытие кейса</div>
+      <div class="case-toolbar">
+        <div class="roll-count-row" id="countChoiceRow">
+          <button class="count-btn active" data-open-count="1" type="button">x1</button>
+          <button class="count-btn" data-open-count="2" type="button">x2</button>
+          <button class="count-btn" data-open-count="3" type="button">x3</button>
+        </div>
+        <button class="open-case-btn" id="openCaseBtn" type="button">Открыть</button>
+      </div>
+      <div id="multiRollArea" class="multi-roll-area count-1"></div>
+      <div class="modal-result" id="modalResult"></div>
+      <button class="close-btn" id="closeCaseModalBtn" type="button">Закрыть</button>
+    </div>
+  </div>
+
+  <div class="modal hidden" id="adminModal">
+    <div class="modal-card admin-card">
+      <button id="adminCloseBtn" class="close-btn" type="button" style="position:absolute;top:14px;right:14px;width:42px;height:42px;padding:0;border-radius:50%;font-size:18px;line-height:1;">❌</button>
+
+      <div class="site-head">
+        <div class="site-head-title" id="siteHeadTitle">Открывай кейсы красиво и без задержек</div>
+        <div class="site-head-desc" id="siteHeadDesc">Результат определяется до анимации, а интерфейс показывает его красиво и без задержек.</div>
+        <div class="field">
+          <label>Редактируемый заголовок</label>
+          <input type="text" id="siteHeadlineInput" class="input" value="Открывай кейсы красиво и без задержек" />
+        </div>
+        <div class="field">
+          <label>Редактируемое описание</label>
+          <textarea id="siteDescriptionInput" rows="3">Результат определяется до анимации, а интерфейс показывает его красиво и без задержек.</textarea>
+        </div>
+      </div>
+
+      <div class="modal-title">Войти</div>
+
+      <div id="adminLoginView" class="admin-login">
+        <input type="text" id="adminLogin" class="input" autocomplete="off" placeholder="Логин" />
+        <input type="password" id="adminPassword" class="input" autocomplete="off" placeholder="Пароль" />
+        <button class="primary-btn" id="adminLoginBtn" type="button">Войти</button>
+        <div class="hint error hidden" id="adminLoginHint"></div>
+      </div>
+
+      <div id="adminPanelView" class="hidden">
+        <div class="admin-top">
+          <div class="hint">Все изменения применяются сразу и сохраняются в localStorage.</div>
+          <div id="myProfileBox"></div>
+          <button class="danger-btn" id="adminLogoutBtn" type="button">Выйти из аккаунта</button>
+        </div>
+
+        <div class="admin-actions">
+          <button class="save-btn" id="saveAllBtn" type="button">Сохранить</button>
+          <button class="primary-btn" id="createCaseBtn" type="button">Создать новый кейс</button>
+          <div class="hint" id="adminGlobalHint"></div>
+        </div>
+
+        <div id="adminControls"></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="toast hidden" id="toast"></div>
+
+  <script>
+    const STORAGE_KEY = "pr_gram_cases_v3";
+    const HISTORY_KEY = "pr_gram_history_v2";
+    const UI_KEY = "pr_gram_ui_v2";
+    const DEFAULT_UI_TEXT = {
+      title: "Открывай кейсы красиво и без задержек",
+      desc: "Результат определяется до анимации, а интерфейс показывает его красиво и без задержек."
+    };
+
+    const DEFAULT_STATE = {
+      balance: 100000,
+      adminLoggedIn: false,
+      cases: {
+        beginner: { name: "Beginner", emoji: "💎", description: "Стартовый кейс для быстрых открытий.", price: 5000, freeCooldownMinutes: 0, lastOpenedAt: 0, rewards: [
+          { amount: 1000, chance: 50, count: 10, color: "#ffffff", effect: "white", rarity: "Silver" },
+          { amount: 2500, chance: 25, count: 7, color: "#ffd86c", effect: "gold", rarity: "Gold" },
+          { amount: 5000, chance: 15, count: 5, color: "#8fe8ff", effect: "diamond", rarity: "Legendary" },
+          { amount: 7500, chance: 7, count: 5, color: "#53e6a5", effect: "emerald", rarity: "Epic" },
+          { amount: 10000, chance: 3, count: 3, color: "#84a8ff", effect: "blue", rarity: "Rare" }
+        ]},
+        pro: { name: "Pro", emoji: "⚡", description: "Средний кейс для более смелой игры.", price: 25000, freeCooldownMinutes: 1, lastOpenedAt: 0, rewards: [
+          { amount: 5000, chance: 50, count: 10, color: "#ffffff", effect: "white", rarity: "Silver" },
+          { amount: 10000, chance: 25, count: 7, color: "#ffd86c", effect: "gold", rarity: "Gold" },
+          { amount: 15000, chance: 15, count: 5, color: "#8fe8ff", effect: "diamond", rarity: "Legendary" },
+          { amount: 17500, chance: 7, count: 5, color: "#53e6a5", effect: "emerald", rarity: "Epic" },
+          { amount: 30000, chance: 3, count: 3, color: "#84a8ff", effect: "blue", rarity: "Rare" }
+        ]},
+        master: { name: "Master", emoji: "🔥", description: "Продвинутый кейс с более редкими наградами.", price: 75000, freeCooldownMinutes: 3, lastOpenedAt: 0, rewards: [
+          { amount: 20000, chance: 50, count: 10, color: "#ffffff", effect: "white", rarity: "Silver" },
+          { amount: 50000, chance: 25, count: 7, color: "#ffd86c", effect: "gold", rarity: "Gold" },
+          { amount: 75000, chance: 15, count: 5, color: "#8fe8ff", effect: "diamond", rarity: "Legendary" },
+          { amount: 77500, chance: 7, count: 5, color: "#53e6a5", effect: "emerald", rarity: "Epic" },
+          { amount: 100000, chance: 3, count: 3, color: "#84a8ff", effect: "blue", rarity: "Rare" }
+        ]}
+      }
+    };
+
+    let state = loadState();
+    let history = loadHistory();
+    let ui = loadUI();
+    let isOpening = false;
+    let selectedCaseKey = null;
+    let selectedOpenCount = 1;
+    let currentAllowedCounts = [1];
+
+    const sounds = {
+      click: new Audio("sounds/click.mp3"),
+      spin: new Audio("sounds/spin.mp3"),
+      win: new Audio("sounds/win.mp3"),
+      rare: new Audio("sounds/rare.mp3")
+    };
+    sounds.click.volume = 0.25;
+    sounds.spin.volume = 0.2;
+    sounds.win.volume = 0.35;
+    sounds.rare.volume = 0.45;
+
+    const els = {
+      balanceValue: document.getElementById("balanceValue"),
+      casesGrid: document.getElementById("casesGrid"),
+      caseModal: document.getElementById("caseModal"),
+      modalTitle: document.getElementById("modalTitle"),
+      modalResult: document.getElementById("modalResult"),
+      closeCaseModalBtn: document.getElementById("closeCaseModalBtn"),
+      openAdminBtn: document.getElementById("openAdminBtn"),
+      adminModal: document.getElementById("adminModal"),
+      adminLogin: document.getElementById("adminLogin"),
+      adminPassword: document.getElementById("adminPassword"),
+      adminLoginBtn: document.getElementById("adminLoginBtn"),
+      adminLoginView: document.getElementById("adminLoginView"),
+      adminPanelView: document.getElementById("adminPanelView"),
+      adminControls: document.getElementById("adminControls"),
+      adminLoginHint: document.getElementById("adminLoginHint"),
+      adminGlobalHint: document.getElementById("adminGlobalHint"),
+      adminLogoutBtn: document.getElementById("adminLogoutBtn"),
+      saveAllBtn: document.getElementById("saveAllBtn"),
+      createCaseBtn: document.getElementById("createCaseBtn"),
+      toast: document.getElementById("toast"),
+      multiRollArea: document.getElementById("multiRollArea"),
+      openCaseBtn: document.getElementById("openCaseBtn"),
+      historyList: document.getElementById("historyList"),
+      toggleHistoryBtn: document.getElementById("toggleHistoryBtn"),
+      historyModal: document.getElementById("historyModal"),
+      closeHistoryModalBtn: document.getElementById("closeHistoryModalBtn"),
+      adminCloseBtn: document.getElementById("adminCloseBtn"),
+      siteHeadlineInput: document.getElementById("siteHeadlineInput"),
+      siteDescriptionInput: document.getElementById("siteDescriptionInput"),
+      heroTitle: document.getElementById("heroTitle"),
+      heroDesc: document.getElementById("heroDesc"),
+      siteHeadTitle: document.getElementById("siteHeadTitle"),
+      siteHeadDesc: document.getElementById("siteHeadDesc")
+    };
+
+    function clone(obj){ return JSON.parse(JSON.stringify(obj)); }
+    function normalizeNumber(v, fallback = 0){ const n = Number(v); return Number.isFinite(n) ? n : fallback; }
+    function money(n){ const num = Number(n); return Number.isFinite(num) ? `${num.toLocaleString("ru-RU")} PR GRAM` : `0 PR GRAM`; }
+
+    function loadState(){
+      const saved = localStorage.getItem(STORAGE_KEY);
+      if (!saved) return clone(DEFAULT_STATE);
+      try{
+        const parsed = JSON.parse(saved);
+        return { ...clone(DEFAULT_STATE), ...parsed, cases: { ...clone(DEFAULT_STATE.cases), ...parsed.cases } };
+      }catch{
+        return clone(DEFAULT_STATE);
+      }
+    }
+    function saveState(){ localStorage.setItem(STORAGE_KEY, JSON.stringify(state)); }
+    function loadHistory(){ try{ return JSON.parse(localStorage.getItem(HISTORY_KEY) || "[]"); }catch{ return []; } }
+    function saveHistory(){ localStorage.setItem(HISTORY_KEY, JSON.stringify(history.slice(0, 20))); }
+    function loadUI(){ try{ return JSON.parse(localStorage.getItem(UI_KEY) || "{}"); }catch{ return {}; } }
+    function saveUI(){ localStorage.setItem(UI_KEY, JSON.stringify(ui)); }
+
+    function toast(msg){
+      els.toast.textContent = msg;
+      els.toast.classList.remove("hidden");
+      clearTimeout(toast.t);
+      toast.t = setTimeout(() => els.toast.classList.add("hidden"), 2200);
+    }
+
+    function syncBalance(){ els.balanceValue.textContent = money(state.balance); }
+
+    function getPrizeStyle(amount){
+      const n = normalizeNumber(amount, 0);
+      if (n >= 100000) return { key: "diamond", label: "DIAMOND" };
+      if (n >= 75000) return { key: "emerald", label: "EMERALD" };
+      if (n >= 50000) return { key: "gold", label: "GOLD" };
+      if (n >= 20000) return { key: "blue", label: "BLUE" };
+      if (n >= 5000) return { key: "white", label: "WHITE" };
+      return { key: "silver", label: "SILVER" };
+    }
+
+    function renderHistory(){
+      els.historyList.innerHTML = history.length ? history.map(h => {
+        const s = getPrizeStyle(h.amount);
+        return `<div class="history-item"><div><div class="history-main">${h.caseName}</div><div class="history-meta">${h.time}</div></div><div class="history-amount prize-${s.key}">${money(h.amount)}</div></div>`;
+      }).join("") : `<div class="history-item"><div><div class="history-main">Пока пусто</div><div class="history-meta">Тут появятся последние выигрыши</div></div></div>`;
+    }
+
+    function pushHistory(entry){
+      history.unshift(entry);
+      history = history.slice(0, 20);
+      saveHistory();
+      renderHistory();
+    }
+
+    function validateCase(caseData){
+      const sum = caseData.rewards.reduce((acc, r) => acc + normalizeNumber(r.chance, 0), 0);
+      if (Math.abs(sum - 100) > 0.0001) return `В кейсе "${caseData.name}" сумма процентов должна быть 100%, сейчас ${sum}%`;
+      for (const r of caseData.rewards){
+        if (normalizeNumber(r.count, 0) < 1) return "Количество отображений не может быть меньше 1";
+        if (normalizeNumber(r.count, 0) > 30) return "Количество отображений не может быть больше 30";
+        if (normalizeNumber(r.amount, 0) < 0) return "Сумма приза не может быть отрицательной";
+        if (normalizeNumber(r.chance, 0) < 0) return "Шанс не может быть отрицательным";
+      }
+      return null;
+    }
+
+    function validateAll(){
+      for (const key of Object.keys(state.cases)){
+        const err = validateCase(state.cases[key]);
+        if (err) return err;
+      }
+      return null;
+    }
+
+    function weightedPick(rewards){
+      const sum = rewards.reduce((a, r) => a + Math.max(0, normalizeNumber(r.chance, 0)), 0);
+      if (sum <= 0) return rewards[0];
+      let roll = Math.random() * sum;
+      for (const reward of rewards){
+        roll -= Math.max(0, normalizeNumber(reward.chance, 0));
+        if (roll < 0) return reward;
+      }
+      return rewards[rewards.length - 1];
+    }
+
+    function playSound(sound){ if (!sound) return; try{ sound.currentTime = 0; sound.play().catch(() => {}); }catch{} }
+    function stopSound(sound){ if (!sound) return; try{ sound.pause(); sound.currentTime = 0; }catch{} }
+    function vibrate(pattern=20){ if (navigator.vibrate) navigator.vibrate(pattern); }
+
+    function setInteractivity(disabled){
+      document.querySelectorAll(".case-btn,.count-btn,.open-case-btn,.close-btn,.admin-btn,.primary-btn,.danger-btn,.save-btn,#adminLogoutBtn,#adminLoginBtn,#saveAllBtn,#adminCloseBtn").forEach(btn => {
+        if (btn) btn.disabled = disabled;
+      });
+    }
+
+    function getAllowedCounts(caseData){
+      const limit = normalizeNumber(caseData.freeCooldownMinutes, 0);
+      return limit > 0 ? [1] : [1,2,3];
+    }
+
+    function cooldownLeftMs(caseData){
+      const minutes = Math.max(0, normalizeNumber(caseData.freeCooldownMinutes, 0));
+      if (minutes <= 0) return 0;
+      const last = normalizeNumber(caseData.lastOpenedAt, 0);
+      return Math.max(0, minutes * 60000 - (Date.now() - last));
+    }
+
+    function syncOpenCountUI(){
+      const buttons = document.querySelectorAll("[data-open-count]");
+      buttons.forEach(btn => {
+        const count = Number(btn.dataset.openCount);
+        const allowed = currentAllowedCounts.includes(count);
+        btn.disabled = !allowed;
+        btn.style.opacity = allowed ? "1" : ".35";
+        btn.style.cursor = allowed ? "pointer" : "not-allowed";
+        if (!allowed) btn.classList.remove("active");
+      });
+      if (!currentAllowedCounts.includes(selectedOpenCount)) selectedOpenCount = currentAllowedCounts[0] || 1;
+      buttons.forEach(btn => btn.classList.toggle("active", Number(btn.dataset.openCount) === selectedOpenCount && currentAllowedCounts.includes(Number(btn.dataset.openCount))));
+      if (selectedCaseKey) setRollLayout(selectedOpenCount);
+    }
+
+    function setRollLayout(count){
+      els.multiRollArea.classList.remove("count-1","count-2","count-3");
+      els.multiRollArea.classList.add(`count-${count}`);
+      els.multiRollArea.style.gridAutoFlow = "column";
+    }
+
+    function renderCases(){
+      els.casesGrid.innerHTML = "";
+      Object.entries(state.cases).forEach(([key, c]) => {
+        const card = document.createElement("div");
+        card.className = "case-card";
+        card.innerHTML = `
+          <div class="case-head">
+            <div>
+              <div class="case-name">${c.name}</div>
+              <div class="case-price">${money(c.price)}</div>
+            </div>
+            <button class="case-btn" data-open="${key}" type="button">Открыть кейс</button>
+          </div>
+          <div class="case-hero">
+            <div class="case-emoji">${c.emoji || "🎁"}</div>
+            <div class="case-hero-text">
+              <div class="case-desc">${c.description || ""}</div>
+            </div>
+          </div>
+          <div class="prize-list">
+            ${c.rewards.map(r => `<div class="prize-row"><span>${(r.rarity || getPrizeStyle(r.amount).label || "Standard")} — ${money(r.amount)}</span><span>${normalizeNumber(r.chance,0)}%</span></div>`).join("")}
+          </div>`;
+        els.casesGrid.appendChild(card);
+      });
+      document.querySelectorAll("[data-open]").forEach(btn => btn.addEventListener("click", () => openCaseModal(btn.dataset.open)));
+    }
+
+    function openCaseModal(caseKey){
+      if (isOpening) return;
+      selectedCaseKey = caseKey;
+      const caseData = state.cases[caseKey];
+      currentAllowedCounts = getAllowedCounts(caseData);
+      selectedOpenCount = currentAllowedCounts[0];
+      els.caseModal.classList.remove("hidden","big-win-overlay");
+      els.modalTitle.textContent = `Открытие кейса: ${caseData.name}`;
+      els.modalResult.textContent = "";
+      els.multiRollArea.innerHTML = "";
+      setRollLayout(selectedOpenCount);
+      syncOpenCountUI();
+    }
+
+    function buildRollItems(caseData, winItem){
+      const finalCount = 30;
+      const items = [];
+      for (let i = 0; i < finalCount - 1; i++){
+        const r = caseData.rewards[Math.floor(Math.random() * caseData.rewards.length)];
+        items.push({ amount: r.amount, isWin: false, rarity: r.rarity });
+      }
+      const insertAt = Math.floor(finalCount * 0.75);
+      items.splice(insertAt, 0, { amount: winItem.amount, isWin: true, color: winItem.color, effect: winItem.effect, rarity: winItem.rarity });
+      while (items.length < finalCount){
+        const r = caseData.rewards[Math.floor(Math.random() * caseData.rewards.length)];
+        items.push({ amount: r.amount, isWin: false, rarity: r.rarity });
+      }
+      return items;
+    }
+
+    function createRollBlock(title){
+      const block = document.createElement("div");
+      block.className = "roll-item";
+      block.innerHTML = `<div class="roller-wrap"><div class="roller-line"></div><div class="roller-window"><div class="roller-track"></div><div class="selector"></div></div><div class="modal-result" style="margin-top:12px">${title}</div></div>`;
+      return block;
+    }
+
+    function triggerFireworks(){
+      const canvas = document.createElement("canvas");
+      canvas.style.position = "fixed";
+      canvas.style.inset = "0";
+      canvas.style.pointerEvents = "none";
+      canvas.style.zIndex = "80";
+      document.body.appendChild(canvas);
+      const ctx = canvas.getContext("2d");
+      const dpr = window.devicePixelRatio || 1;
+      const resize = () => { canvas.width = innerWidth * dpr; canvas.height = innerHeight * dpr; ctx.setTransform(dpr,0,0,dpr,0,0); };
+      resize();
+      const colors = ["#53e6a5","#8fe8ff","#ffd86c","#84a8ff","#ffffff"];
+      const particles = Array.from({length:90}, () => ({
+        x: innerWidth * 0.5,
+        y: innerHeight * 0.45,
+        vx:(Math.random()-0.5)*12,
+        vy:(Math.random()-0.8)*12,
+        r:Math.random()*3+1,
+        a:1,
+        c:colors[Math.floor(Math.random()*colors.length)]
+      }));
+      let frame = 0;
+      const loop = () => {
+        ctx.clearRect(0,0,innerWidth,innerHeight);
+        particles.forEach(p => {
+          p.vy += 0.18;
+          p.x += p.vx;
+          p.y += p.vy;
+          p.a *= 0.985;
+          ctx.globalAlpha = p.a;
+          ctx.fillStyle = p.c;
+          ctx.beginPath();
+          ctx.arc(p.x,p.y,p.r,0,Math.PI*2);
+          ctx.fill();
+        });
+        frame++;
+        if (frame < 80) requestAnimationFrame(loop); else canvas.remove();
+      };
+      loop();
+    }
+
+    function spinOne(caseData, container, idx){
+      return new Promise(resolve => {
+        const winItem = weightedPick(caseData.rewards);
+        const block = createRollBlock(String(idx + 1));
+        const track = block.querySelector(".roller-track");
+        const windowEl = block.querySelector(".roller-window");
+        container.appendChild(block);
+
+        const items = buildRollItems(caseData, winItem);
+        const itemWidth = 140;
+        const winIndex = items.findIndex(i => i.isWin);
+
+        items.forEach(item => {
+          const el = document.createElement("div");
+          el.className = "roller-item";
+          if (item.isWin) el.dataset.win = "1";
+          el.innerHTML = `<div class="mini">${item.isWin ? "🎉" : "🎁"}</div><div class="amount">${money(item.amount)}</div><div class="rarity">${item.rarity || ""}</div>`;
+          track.appendChild(el);
+        });
+
+        requestAnimationFrame(() => {
+          requestAnimationFrame(() => {
+            const windowWidth = windowEl.clientWidth;
+            const targetCenter = winIndex * itemWidth + itemWidth / 2;
+            const offset = targetCenter - windowWidth / 2;
+            windowEl.classList.add("is-spinning");
+            track.style.transition = "transform 5.2s cubic-bezier(.12,.85,.12,1)";
+            track.style.transform = `translate3d(-${offset}px,0,0)`;
+            playSound(sounds.spin);
+
+            setTimeout(() => {
+              const winEl = track.querySelector("[data-win='1']");
+              if (winEl) winEl.classList.add("win");
+              const resultText = block.querySelector(".modal-result");
+              const s = getPrizeStyle(winItem.amount);
+              const effect = ["white","gold","diamond","emerald","blue"].includes(winItem.effect) ? winItem.effect : s.key;
+              resultText.className = `modal-result prize-${effect}`;
+              resultText.innerHTML = `<span class="result-tag ${effect}">${winItem.rarity || s.label}</span><span class="result-amount">${money(winItem.amount)}</span>`;
+              resultText.style.color = winItem.color || "";
+              block.classList.add(`prize-card-${s.key}`);
+              if (effect === "emerald") triggerFireworks();
+              if (winItem.amount >= 50000) resultText.classList.add("big");
+              block.classList.add("big-win");
+              resolve(winItem);
+            }, 5400);
+          });
+        });
+      });
+    }
+
+    function openCase(caseKey, free){
+      if (isOpening) return;
+      const caseData = state.cases[caseKey];
+      const err = validateCase(caseData);
+      if (err) return toast(err);
+
+      const limit = normalizeNumber(caseData.freeCooldownMinutes, 0);
+      currentAllowedCounts = getAllowedCounts(caseData);
+
+      if (limit > 0){
+        selectedOpenCount = 1;
+        const left = cooldownLeftMs(caseData);
+        if (left > 0){
+          const h = Math.floor(left / 3600000);
+          const m = Math.floor((left % 3600000) / 60000);
+          const s = Math.floor((left % 60000) / 1000);
+          return toast(h > 0 ? `Подожди ${h}ч ${m}м` : m > 0 ? `Подожди ${m}м ${s}с` : `Подожди ${s}с`);
+        }
+      } else if (![1,2,3].includes(selectedOpenCount)){
+        selectedOpenCount = 1;
+      }
+
+      const totalPrice = free ? 0 : caseData.price * selectedOpenCount;
+      if (!free && state.balance < totalPrice) return toast("Недостаточно баланса");
+
+      isOpening = true;
+      setInteractivity(true);
+
+      els.caseModal.classList.remove("big-win-overlay");
+      els.modalTitle.textContent = caseData.name;
+      els.modalResult.textContent = "";
+      els.multiRollArea.innerHTML = "";
+      setRollLayout(selectedOpenCount);
+      els.caseModal.classList.remove("hidden");
+
+      if (!free) state.balance -= totalPrice;
+      saveState();
+      syncBalance();
+
+      playSound(sounds.click);
+      vibrate(15);
+
+      Promise.all(Array.from({length:selectedOpenCount}, (_, i) => spinOne(caseData, els.multiRollArea, i))).then(results => {
+        stopSound(sounds.spin);
+        const totalWin = results.reduce((sum, win) => sum + normalizeNumber(win.amount, 0), 0);
+        state.balance += totalWin;
+        caseData.lastOpenedAt = Date.now();
+        saveState();
+        syncBalance();
+
+        const big = totalWin >= caseData.price * 1.5 || totalWin >= 50000;
+        els.modalResult.textContent = big ? `BIG WIN! ${money(totalWin)}` : money(totalWin);
+        els.modalResult.classList.toggle("big", big);
+        els.caseModal.classList.toggle("big-win-overlay", big);
+        big ? playSound(sounds.rare) : playSound(sounds.win);
+
+        results.forEach(win => pushHistory({ caseName: caseData.name, amount: win.amount, time: new Date().toLocaleString("ru-RU") }));
+        vibrate(big ? [40,30,40,20] : 20);
+
+        isOpening = false;
+        setInteractivity(false);
+        selectedOpenCount = currentAllowedCounts[0] || 1;
+        syncOpenCountUI();
+      });
+    }
+
+    function closeCaseModal(){
+      if (isOpening) return;
+      els.caseModal.classList.add("hidden");
+      els.caseModal.classList.remove("big-win-overlay");
+      els.multiRollArea.innerHTML = "";
+      selectedCaseKey = null;
+      selectedOpenCount = 1;
+      currentAllowedCounts = [1];
+      stopSound(sounds.spin);
+    }
+
+    function buildAdminControls(){
+      els.adminControls.innerHTML = "";
+      Object.entries(state.cases).forEach(([key, caseData]) => {
+        const block = document.createElement("div");
+        block.className = "admin-control";
+        block.innerHTML = `
+          <div style="display:flex;justify-content:space-between;gap:12px;align-items:center">
+            <h3 style="margin:0">${caseData.name}</h3>
+            <button class="danger-btn" data-delete-case="${key}" type="button">Удалить</button>
+          </div>
+
+          <div class="field">
+            <label>Название кейса</label>
+            <input type="text" data-case="${key}" data-field="name" value="${caseData.name}">
+          </div>
+
+          <div class="field">
+            <label>Описание кейса</label>
+            <textarea data-case="${key}" data-field="description" rows="3">${caseData.description || ""}</textarea>
+          </div>
+
+          <div class="control-grid">
+            <div class="field">
+              <label>Эмоджи кейса</label>
+              <input type="text" maxlength="2" data-case="${key}" data-field="emoji" value="${caseData.emoji || "🎁"}">
+            </div>
+            <div class="field">
+              <label>Цена кейса</label>
+              <input type="number" min="0" step="1" data-case="${key}" data-field="price" value="${normalizeNumber(caseData.price,0)}">
+            </div>
+          </div>
+
+          <div class="field" style="margin-top:14px;">
+            <label>Лимит кейса (0 = без лимита)</label>
+            <input type="number" min="0" max="2880" step="1" data-case="${key}" data-field="freeCooldownMinutes" value="${normalizeNumber(caseData.freeCooldownMinutes,0)}">
+          </div>
+
+          <div class="rewards-stack">
+            ${caseData.rewards.map((r, idx) => `
+              <div class="reward-card">
+                <div class="reward-title">Приз ${idx + 1}</div>
+                <div class="control-grid">
+                  <div class="field">
+                    <label>Уникальность</label>
+                    <input type="text" data-case="${key}" data-field="rarity" data-idx="${idx}" value="${r.rarity || "Standard"}">
+                  </div>
+                  <div class="field">
+                    <label>Сумма</label>
+                    <input type="number" min="0" step="1" data-case="${key}" data-field="amount" data-idx="${idx}" value="${normalizeNumber(r.amount,0)}">
+                  </div>
+                </div>
+                <div class="control-grid" style="margin-top:12px;">
+                  <div class="field">
+                    <label>Процент выпадения</label>
+                    <input type="number" min="0" max="100" step="0.1" data-case="${key}" data-field="chance" data-idx="${idx}" value="${normalizeNumber(r.chance,0)}">
+                  </div>
+                  <div class="field">
+                    <label>Процент для отображения</label>
+                    <input type="number" min="0" max="100" step="0.1" data-case="${key}" data-field="realChance" data-idx="${idx}" value="${normalizeNumber(r.realChance ?? r.chance,0)}">
+                  </div>
+                </div>
+                <div class="field" style="margin-top:12px;">
+                  <label>Цвет текста</label>
+                  <div class="picker-row">
+                    <button type="button" class="picker-btn ${r.color==="#ffffff" ? "picker-white active":"picker-white"}" data-picker="color" data-case="${key}" data-idx="${idx}" data-value="#ffffff">White</button>
+                    <button type="button" class="picker-btn ${r.color==="#ffd86c" ? "picker-gold active":"picker-gold"}" data-picker="color" data-case="${key}" data-idx="${idx}" data-value="#ffd86c">Gold</button>
+                    <button type="button" class="picker-btn ${r.color==="#8fe8ff" ? "picker-diamond active":"picker-diamond"}" data-picker="color" data-case="${key}" data-idx="${idx}" data-value="#8fe8ff">Diamond</button>
+                    <button type="button" class="picker-btn ${r.color==="#53e6a5" ? "picker-emerald active":"picker-emerald"}" data-picker="color" data-case="${key}" data-idx="${idx}" data-value="#53e6a5">Emerald</button>
+                    <button type="button" class="picker-btn ${r.color==="#84a8ff" ? "picker-blue active":"picker-blue"}" data-picker="color" data-case="${key}" data-idx="${idx}" data-value="#84a8ff">Blue</button>
+                  </div>
+                </div>
+                <div class="field" style="margin-top:12px;">
+                  <label>Эффект</label>
+                  <div class="picker-row">
+                    <button type="button" class="picker-btn ${r.effect==="white" ? "eff-white active":"eff-white"}" data-picker="effect" data-case="${key}" data-idx="${idx}" data-value="white">White</button>
+                    <button type="button" class="picker-btn ${r.effect==="gold" ? "eff-gold active":"eff-gold"}" data-picker="effect" data-case="${key}" data-idx="${idx}" data-value="gold">Gold</button>
+                    <button type="button" class="picker-btn ${r.effect==="diamond" ? "eff-diamond active":"eff-diamond"}" data-picker="effect" data-case="${key}" data-idx="${idx}" data-value="diamond">Diamond</button>
+                    <button type="button" class="picker-btn ${r.effect==="emerald" ? "eff-emerald active":"eff-emerald"}" data-picker="effect" data-case="${key}" data-idx="${idx}" data-value="emerald">Emerald</button>
+                    <button type="button" class="picker-btn ${r.effect==="blue" ? "eff-blue active":"eff-blue"}" data-picker="effect" data-case="${key}" data-idx="${idx}" data-value="blue">Blue</button>
+                  </div>
+                </div>
+              </div>
+            `).join("")}
+          </div>`;
+        els.adminControls.appendChild(block);
+      });
+
+      els.adminControls.querySelectorAll("input, textarea").forEach(input => {
+        input.addEventListener("input", () => {
+          const caseKey = input.dataset.case;
+          const field = input.dataset.field;
+          const idx = input.dataset.idx;
+          const val = input.value;
+
+          if (field === "name") state.cases[caseKey].name = val.trim();
+          else if (field === "emoji") state.cases[caseKey].emoji = val.trim();
+          else if (field === "description") state.cases[caseKey].description = val;
+          else if (field === "price") state.cases[caseKey].price = Math.max(0, normalizeNumber(val,0));
+          else if (field === "freeCooldownMinutes") state.cases[caseKey].freeCooldownMinutes = Math.max(0, Math.min(2880, normalizeNumber(val,0)));
+          else if (field === "rarity") state.cases[caseKey].rewards[Number(idx)].rarity = val || "Standard";
+          else if (field === "amount") state.cases[caseKey].rewards[Number(idx)].amount = Math.max(0, normalizeNumber(val,0));
+          else if (field === "chance") state.cases[caseKey].rewards[Number(idx)].chance = Math.max(0, normalizeNumber(val,0));
+          else if (field === "realChance") state.cases[caseKey].rewards[Number(idx)].realChance = Math.max(0, normalizeNumber(val,0));
+
+          saveState();
+          renderCases();
+          els.adminGlobalHint.textContent = validateAll() || "";
+          syncOpenCountUI();
+        });
+      });
+
+      els.adminControls.querySelectorAll("[data-picker]").forEach(btn => {
+        btn.addEventListener("click", () => {
+          const row = btn.closest(".picker-row");
+          const caseKey = btn.dataset.case;
+          const idx = Number(btn.dataset.idx);
+          const field = btn.dataset.picker;
+          state.cases[caseKey].rewards[idx][field] = btn.dataset.value;
+          row.querySelectorAll(".picker-btn").forEach(b => b.classList.remove("active"));
+          btn.classList.add("active");
+          saveState();
+          renderCases();
+          els.adminGlobalHint.textContent = validateAll() || "";
+        });
+      });
+
+      els.adminControls.querySelectorAll("[data-delete-case]").forEach(btn => {
+        btn.addEventListener("click", () => {
+          const key = btn.dataset.deleteCase;
+          if (Object.keys(state.cases).length <= 1) return toast("Нельзя удалить последний кейс");
+          delete state.cases[key];
+          saveState();
+          renderCases();
+          buildAdminControls();
+          toast("Кейс удалён");
+        });
+      });
+    }
+
+    function applyUITexts(){
+      const title = ui.siteHeadline || DEFAULT_UI_TEXT.title;
+      const desc = ui.siteDescription || DEFAULT_UI_TEXT.desc;
+      els.heroTitle.textContent = title;
+      els.heroDesc.textContent = desc;
+      els.siteHeadTitle.textContent = title;
+      els.siteHeadDesc.textContent = desc;
+      els.siteHeadlineInput.value = title;
+      els.siteDescriptionInput.value = desc;
+    }
+
+    function openAdminPanel(){
+      els.adminModal.classList.remove("hidden");
+      els.adminLoginHint.textContent = "";
+      els.adminLoginHint.classList.add("hidden");
+      applyUITexts();
+      if (state.adminLoggedIn){
+        els.adminLoginView.classList.add("hidden");
+        els.adminPanelView.classList.remove("hidden");
+        buildAdminControls();
+        document.getElementById("myProfileBox").textContent = "ADMIN Telegram youradminprofile";
+      } else {
+        els.adminLoginView.classList.remove("hidden");
+        els.adminPanelView.classList.add("hidden");
+      }
+    }
+
+    function saveAdminChanges(){
+      const error = validateAll();
+      if (error) return els.adminGlobalHint.textContent = error, toast(error);
+      saveState();
+      els.adminGlobalHint.textContent = "";
+      toast("Сохранено");
+      renderCases();
+      syncBalance();
+      syncOpenCountUI();
+    }
+
+    document.querySelectorAll("[data-open-count]").forEach(btn => {
+      btn.addEventListener("click", () => {
+        if (isOpening) return;
+        const count = Number(btn.dataset.openCount);
+        if (!currentAllowedCounts.includes(count)) return;
+        selectedOpenCount = count;
+        document.querySelectorAll("[data-open-count]").forEach(x => x.classList.remove("active"));
+        btn.classList.add("active");
+        setRollLayout(count);
+      });
+    });
+
+    els.openCaseBtn.addEventListener("click", () => {
+      if (isOpening) return;
+      if (!selectedCaseKey) return toast("Выберите кейс");
+      openCase(selectedCaseKey, false);
+    });
+
+    els.closeCaseModalBtn.addEventListener("click", closeCaseModal);
+    els.caseModal.addEventListener("click", e => { if (e.target === els.caseModal && !isOpening) closeCaseModal(); });
+    els.openAdminBtn.addEventListener("click", openAdminPanel);
+    els.adminCloseBtn.addEventListener("click", () => els.adminModal.classList.add("hidden"));
+    els.toggleHistoryBtn.addEventListener("click", () => { if (state.adminLoggedIn) els.historyModal.classList.remove("hidden"); else toast("Сначала войди в аккаунт"); });
+    els.closeHistoryModalBtn.addEventListener("click", () => els.historyModal.classList.add("hidden"));
+    els.historyModal.addEventListener("click", e => { if (e.target === els.historyModal) els.historyModal.classList.add("hidden"); });
+    els.adminLoginBtn.addEventListener("click", () => {
+      if (els.adminLogin.value === "ADMIN" && els.adminPassword.value === "20262026") {
+        state.adminLoggedIn = true;
+        saveState();
+        els.adminLoginView.classList.add("hidden");
+        els.adminPanelView.classList.remove("hidden");
+        buildAdminControls();
+        document.getElementById("myProfileBox").textContent = "ADMIN Telegram youradminprofile";
+        toast("Успешный вход");
+      } else {
+        els.adminLoginHint.classList.remove("hidden");
+        els.adminLoginHint.textContent = "Неверный логин или пароль";
+      }
+    });
+    els.adminLogoutBtn.addEventListener("click", () => {
+      state.adminLoggedIn = false;
+      saveState();
+      els.adminModal.classList.add("hidden");
+      toast("Выход выполнен");
+    });
+    els.saveAllBtn.addEventListener("click", saveAdminChanges);
+    els.createCaseBtn.addEventListener("click", () => {
+      if (Object.keys(state.cases).length >= 10) return toast("Лимит кейсов: 10");
+      const key = `case_${Date.now()}`;
+      state.cases[key] = {
+        name:`Case ${Object.keys(state.cases).length + 1}`,
+        emoji:"🎁",
+        description:"Новый кейс",
+        price:10000,
+        freeCooldownMinutes:0,
+        lastOpenedAt:0,
+        rewards:[
+          { amount:1000, chance:50, count:10, color:"#ffffff", effect:"white", rarity:"Silver" },
+          { amount:2500, chance:25, count:7, color:"#ffd86c", effect:"gold", rarity:"Gold" },
+          { amount:5000, chance:15, count:5, color:"#8fe8ff", effect:"diamond", rarity:"Legendary" },
+          { amount:7500, chance:7, count:5, color:"#53e6a5", effect:"emerald", rarity:"Epic" },
+          { amount:10000, chance:3, count:3, color:"#84a8ff", effect:"blue", rarity:"Rare" }
+        ]
+      };
+      saveState();
+      renderCases();
+      buildAdminControls();
+      toast("Кейс создан");
+    });
+
+    els.siteHeadlineInput.addEventListener("input", () => {
+      ui.siteHeadline = els.siteHeadlineInput.value.trim();
+      saveUI();
+      applyUITexts();
+    });
+    els.siteDescriptionInput.addEventListener("input", () => {
+      ui.siteDescription = els.siteDescriptionInput.value.trim();
+      saveUI();
+      applyUITexts();
+    });
+
+    document.addEventListener("keydown", e => {
+      if (e.key === "Escape") {
+        els.caseModal.classList.add("hidden");
+        els.historyModal.classList.add("hidden");
+        els.adminModal.classList.add("hidden");
+      }
+    });
+
+    renderCases();
+    renderHistory();
+    syncBalance();
+    applyUITexts();
+    setInteractivity(false);
+  </script>
+</body>
+</html>
